@@ -1,8 +1,9 @@
 gsm:
-  pwd: "YWRtaW4%3D"
+  pwd: '${PWD:YWRtaW4%3D}'
   url:
-    login: "http://192.168.32.1/goform/goform_set_cmd_process"
-    origin: "http://192.168.32.1"
-    referer: "http://192.168.32.1/index.html"
+    get: '${URL_GET:http://192.168.32.1/goform/goform_get_cmd_process}'
+    post: '${URL_POST:http://192.168.32.1/goform/goform_set_cmd_process}'
+    origin: '${HEADER_ORIGIN:http://192.168.32.1}'
+    referer: '${HEADER_REFERER:http://192.168.32.1/index.html}'
 server:
-  port: 8080
+  port: '${PORT:8080}'

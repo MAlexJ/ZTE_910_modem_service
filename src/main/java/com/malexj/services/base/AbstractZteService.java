@@ -1,10 +1,14 @@
 package com.malexj.services.base;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.malexj.exceptions.JsonParseException;
 import com.malexj.models.requests.MessageRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
@@ -17,7 +21,7 @@ import java.util.Optional;
 import static org.springframework.http.HttpHeaders.*;
 
 @RequiredArgsConstructor
-public abstract class AbstractGsmService {
+public abstract class AbstractZteService {
 
     /**
      * Request body params for login
@@ -30,8 +34,11 @@ public abstract class AbstractGsmService {
 
     private static final String PWD_QUERY_PARAM_KEY = "password";
 
-    @Value("${gsm.url.login}")
-    private String loginUrl;
+    @Value("${gsm.url.post}")
+    private String postUrl;
+
+    @Value("${gsm.url.get}")
+    private String getUrl;
 
     @Value("${gsm.url.origin}")
     private String originUrl;
@@ -44,9 +51,15 @@ public abstract class AbstractGsmService {
 
     private final RestTemplate restTemplate;
 
+    protected final ObjectMapper mapper = new ObjectMapper();
 
-    public ResponseEntity<String> httpPost(HttpEntity<String> httpEntity) {
-        return restTemplate.postForEntity(loginUrl, httpEntity, String.class);
+
+    protected ResponseEntity<String> httpPost(HttpEntity<String> httpEntity) {
+        return restTemplate.postForEntity(postUrl, httpEntity, String.class);
+    }
+
+    protected ResponseEntity<String> httpGet(UriComponents fullUri, HttpEntity<String> httpEntity) {
+        return restTemplate.exchange(fullUri.toUriString(), HttpMethod.GET, httpEntity, String.class);
     }
 
     protected String getHeadersCookies(ResponseEntity<String> responseEntity) {
@@ -54,6 +67,15 @@ public abstract class AbstractGsmService {
                 .map(HttpEntity::getHeaders) //
                 .map(header -> header.getFirst(HttpHeaders.SET_COOKIE)) //
                 .orElseThrow(() -> new IllegalArgumentException("Cookies not found in Login response"));
+    }
+
+
+    protected <T> T jsonToClass(String json, Class<T> valueType) {
+        try {
+            return mapper.readValue(json, valueType);
+        } catch (JsonProcessingException e) {
+            throw new JsonParseException("Can't parse class - " + valueType.getName(), e);
+        }
     }
 
     protected HttpEntity<String> buildRequestHttpEntity(String rawData, HttpHeaders headers) {
@@ -75,6 +97,14 @@ public abstract class AbstractGsmService {
     protected UriComponentsBuilder baseUriComponentsBuilder() {
         return UriComponentsBuilder.newInstance() //
                 .queryParam(TEST_QUERY_PARAM_KEY, TEST_QUERY_PARAM_VALUE);
+    }
+
+    protected UriComponents buildInfoUriComponents(String requestParams) {
+        return UriComponentsBuilder.fromUriString(getUrl) //
+                .queryParam(TEST_QUERY_PARAM_KEY, TEST_QUERY_PARAM_VALUE) //
+                .queryParam("multi_data", "1") //
+                .queryParam("cmd", requestParams) //
+                .build();
     }
 
     protected UriComponents buildLoginUriComponents() {

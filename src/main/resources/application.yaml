@@ -1,0 +1,8 @@
+gsm:
+  pwd: "YWRtaW4%3D"
+  url:
+    login: "http://192.168.32.1/goform/goform_set_cmd_process"
+    origin: "http://192.168.32.1"
+    referer: "http://192.168.32.1/index.html"
+server:
+  port: 8080

@@ -1,9 +1,7 @@
 package com.malexj.services.base;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.malexj.exceptions.JsonParseException;
 import com.malexj.models.requests.MessageRequest;
+import com.malexj.services.ParseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -21,18 +19,26 @@ import java.util.Optional;
 import static org.springframework.http.HttpHeaders.*;
 
 @RequiredArgsConstructor
-public abstract class AbstractZteService {
+public abstract class AbstractRestService {
 
     /**
-     * Request body params for login
+     * Request params/values for http
      */
     private static final String TEST_QUERY_PARAM_KEY = "isTest";
     private static final String TEST_QUERY_PARAM_VALUE = "false";
 
     private static final String FORM_QUERY_PARAM_KEY = "goformId";
-    private static final String FORM_QUERY_PARAM_VALUE = "LOGIN";
+    private static final String FORM_QUERY_LOGIN_VALUE = "LOGIN";
+    public static final String FORM_QUERY_SEND_SMS_VALUE = "SEND_SMS";
 
     private static final String PWD_QUERY_PARAM_KEY = "password";
+    public static final String MULTI_DATA_PARAM_KEY = "multi_data";
+    public static final String CMD_PARAM_KEY = "cmd";
+    public static final String NOT_CALLBACK_PARAM_KEY = "notCallback";
+    public static final String NUMBER_PARAM_KEY = "Number";
+    public static final String MESSAGE_BODY_PARAM_KEY = "MessageBody";
+    public static final String ID_PARAM_KEY = "ID";
+    public static final String ENCODE_TYPE_PARAM_KEY = "encode_type";
 
     @Value("${gsm.url.post}")
     private String postUrl;
@@ -51,7 +57,7 @@ public abstract class AbstractZteService {
 
     private final RestTemplate restTemplate;
 
-    protected final ObjectMapper mapper = new ObjectMapper();
+    private final ParseService parseService;
 
 
     protected ResponseEntity<String> httpPost(HttpEntity<String> httpEntity) {
@@ -69,14 +75,10 @@ public abstract class AbstractZteService {
                 .orElseThrow(() -> new IllegalArgumentException("Cookies not found in Login response"));
     }
 
-
-    protected <T> T jsonToClass(String json, Class<T> valueType) {
-        try {
-            return mapper.readValue(json, valueType);
-        } catch (JsonProcessingException e) {
-            throw new JsonParseException("Can't parse class - " + valueType.getName(), e);
-        }
+    protected <T> T parseResponseEntity(String body, Class<T> valueType) {
+        return parseService.jsonToClass(body, valueType);
     }
+
 
     protected HttpEntity<String> buildRequestHttpEntity(String rawData, HttpHeaders headers) {
         return new HttpEntity<>(rawData, headers);
@@ -102,26 +104,27 @@ public abstract class AbstractZteService {
     protected UriComponents buildInfoUriComponents(String requestParams) {
         return UriComponentsBuilder.fromUriString(getUrl) //
                 .queryParam(TEST_QUERY_PARAM_KEY, TEST_QUERY_PARAM_VALUE) //
-                .queryParam("multi_data", "1") //
-                .queryParam("cmd", requestParams) //
+                .queryParam(MULTI_DATA_PARAM_KEY, "1") //
+                .queryParam(CMD_PARAM_KEY, requestParams) //
                 .build();
     }
 
     protected UriComponents buildLoginUriComponents() {
         return baseUriComponentsBuilder() //
-                .queryParam(FORM_QUERY_PARAM_KEY, FORM_QUERY_PARAM_VALUE) //
+                .queryParam(FORM_QUERY_PARAM_KEY, FORM_QUERY_LOGIN_VALUE) //
                 .queryParam(PWD_QUERY_PARAM_KEY, gsmPassword) //
                 .build();
     }
 
     protected UriComponents buildMessageUriComponents(MessageRequest messageRequest) {
+        String unicodeMsg = parseService.encodeStringToUnicode(messageRequest.message());
         return baseUriComponentsBuilder() //
-                .queryParam(FORM_QUERY_PARAM_KEY, "SEND_SMS") //
-                .queryParam("notCallback", "true") //
-                .queryParam("Number", messageRequest.phoneNumber()) //
-                .queryParam("MessageBody", encodeStringToUnicode(messageRequest.message())) //
-                .queryParam("ID", "1") //
-                .queryParam("encode_type", "GSM7_default") //
+                .queryParam(FORM_QUERY_PARAM_KEY, FORM_QUERY_SEND_SMS_VALUE) //
+                .queryParam(NOT_CALLBACK_PARAM_KEY, "true") //
+                .queryParam(NUMBER_PARAM_KEY, messageRequest.phoneNumber()) //
+                .queryParam(MESSAGE_BODY_PARAM_KEY, unicodeMsg) //
+                .queryParam(ID_PARAM_KEY, "1") //
+                .queryParam(ENCODE_TYPE_PARAM_KEY, "GSM7_default") //
                 .build();
     }
 
@@ -131,13 +134,4 @@ public abstract class AbstractZteService {
                 .substring(1);
     }
 
-    private String encodeStringToUnicode(String str) {
-        StringBuilder sb = new StringBuilder();
-        for (char ch : str.toCharArray()) {
-            String hexCode = Integer.toHexString(ch).toUpperCase();
-            String hexCodeWithAllLeadingZeros = "0000" + hexCode;
-            sb.append(hexCodeWithAllLeadingZeros.substring(hexCodeWithAllLeadingZeros.length() - 4));
-        }
-        return sb.toString();
-    }
 }

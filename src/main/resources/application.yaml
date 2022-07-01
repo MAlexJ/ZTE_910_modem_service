@@ -1,9 +1,30 @@
 gsm:
-  pwd: '${PWD:YWRtaW4%3D}'
+  pwd: ${PWD:YWRtaW4%3D}
   url:
-    get: '${URL_GET:http://192.168.32.1/goform/goform_get_cmd_process}'
-    post: '${URL_POST:http://192.168.32.1/goform/goform_set_cmd_process}'
-    origin: '${HEADER_ORIGIN:http://192.168.32.1}'
-    referer: '${HEADER_REFERER:http://192.168.32.1/index.html}'
+    get: ${URL_GET:http://192.168.32.1/goform/goform_get_cmd_process}
+    post: ${URL_POST:http://192.168.32.1/goform/goform_set_cmd_process}
+    origin: ${HEADER_ORIGIN:http://192.168.32.1}
+    referer: ${HEADER_REFERER:http://192.168.32.1/index.html}
+
 server:
-  port: '${PORT:8080}'
+  port: ${PORT:8080}
+
+spring:
+  jackson:
+    serialization:
+      indent_output: true
+  application:
+    name: modem-service
+  zipkin:
+    baseUrl: ${ZIPKIN_PORT:http://127.0.0.1:9411}
+
+scheduled:
+  task:
+    job:
+      cron: ${SCHEDULER_CRONE:0 * * * * *}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

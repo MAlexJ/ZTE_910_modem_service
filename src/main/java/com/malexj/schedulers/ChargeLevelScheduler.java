@@ -48,17 +48,16 @@ public class ChargeLevelScheduler {
 
     private String buildLowBatteryMessage(BatteryResponse info) {
         StringBuilder sb = new StringBuilder("Critically low battery level - ") //
-                .append(info.getBatteryVolPercent()) //
-                .append("charge your GSM modem!");
+                .append(info.getBatteryVolPercent());
         return new String(sb);
     }
 
     private String buildChargeRestoredMessage(BatteryResponse info) {
         StringBuilder sb = new StringBuilder("Battery charge restored") //
                 .append(", ")//
-                .append("percent-")//
+                .append("percent - ")//
                 .append(info.getBatteryVolPercent())//
-                .append(", charging-")//
+                .append(", charging - ")//
                 .append(info.getBatteryCharging());
         return new String(sb);
     }

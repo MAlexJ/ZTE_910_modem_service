@@ -4,7 +4,7 @@ Java service that uses ZTE 910 modem as service for sending SMS messages
 ## Application configuration:
 
 ### ENV Variables
-1. PORT - PORT - spring application port, by default - 8081
+1. PORT - spring application port, by default - 8080
 2. SCHEDULER_CRONE - job time to execute for standalone running (override by CONFIG_SERVER_URI)
 3. ZIPKIN_PORT - URL to Zipkin distributed tracing system, by default - http://localhost
 4. CONFIG_SERVER_URI - URL to configuration properties to spring configuration server
@@ -16,7 +16,7 @@ Java service that uses ZTE 910 modem as service for sending SMS messages
 9. HEADER_REFERER
 
 #### Postman
-* postman collection for test API: /info/Scheduler_App_API.postman_collection.json
+* postman collection for test API: /info/GSM APi.postman_collection.json
 
 ## Application info/documentation:
 

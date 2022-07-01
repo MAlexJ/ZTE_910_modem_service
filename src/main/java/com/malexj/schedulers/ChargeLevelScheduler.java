@@ -48,17 +48,15 @@ public class ChargeLevelScheduler {
 
     private String buildLowBatteryMessage(BatteryResponse info) {
         StringBuilder sb = new StringBuilder("Critically low battery level - ") //
-                .append(info.getBatteryVolPercent());
+                .append(info.getBatteryVolPercent()) //
+                .append("%");
         return new String(sb);
     }
 
     private String buildChargeRestoredMessage(BatteryResponse info) {
-        StringBuilder sb = new StringBuilder("Battery charge restored") //
-                .append(", ")//
-                .append("percent - ")//
-                .append(info.getBatteryVolPercent())//
-                .append(", charging - ")//
-                .append(info.getBatteryCharging());
+        StringBuilder sb = new StringBuilder("Battery charge restored - ")//
+                .append(info.getBatteryVolPercent()) //
+                .append("%");
         return new String(sb);
     }
 

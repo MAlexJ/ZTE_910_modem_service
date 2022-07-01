@@ -20,6 +20,9 @@ spring:
 
 scheduled:
   task:
+    phone: ${ADMIN_PHONE_NUMBER}
+    low:
+      level: ${MODEM_LOW_CHARGE_LEVEL:5}
     job:
       cron: ${SCHEDULER_CRONE:0 * * * * *}
 

@@ -18,6 +18,10 @@ Java service that uses ZTE 910 modem as service for sending SMS messages
 #### Postman
 * postman collection for test API: /info/GSM APi.postman_collection.json
 
+#### Swagger UI
+* documentation: https://springdoc.org/ <br>
+* how to use: The Swagger UI page will then be available at http://server:port/context-path/swagger-ui.html
+
 ## Application info/documentation:
 
 #### Spring boot:

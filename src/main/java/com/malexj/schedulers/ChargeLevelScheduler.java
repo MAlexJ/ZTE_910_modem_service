@@ -26,23 +26,33 @@ public class ChargeLevelScheduler {
 
     @Scheduled(cron = "${scheduled.task.job.cron}")
     public void checkChargeLevel() {
-        BatteryResponse info = restService.getInfo(BATTERY_CHARGING_REQUEST);
-        int percent = parsePercent(info.getBatteryVolPercent());
-        log.info("battery percent: " + percent);
+        errorWrapper(() -> {
+            BatteryResponse info = restService.getInfo(BATTERY_CHARGING_REQUEST);
+            int percent = parsePercentChargeBattery(info.getBatteryVolPercent());
+            log.info("battery percent: " + percent);
 
-        if (percent < lowChargeLevel && !isNotified) {
-            String message = buildLowBatteryMessage(info);
-            log.warning(message);
-            restService.sendMessage(new MessageRequest(phoneNumber, message));
-            isNotified = true;
-            return;
-        }
+            if (percent < lowChargeLevel && !isNotified) {
+                String message = buildLowBatteryMessage(info);
+                log.warning(message);
+                restService.sendMessage(new MessageRequest(phoneNumber, message));
+                isNotified = true;
+                return;
+            }
 
-        if (percent > lowChargeLevel && isNotified) {
-            String message = buildChargeRestoredMessage(info);
-            log.info(message);
-            restService.sendMessage(new MessageRequest(phoneNumber, buildChargeRestoredMessage(info)));
-            isNotified = false;
+            if (percent > lowChargeLevel && isNotified) {
+                String message = buildChargeRestoredMessage(info);
+                log.info(message);
+                restService.sendMessage(new MessageRequest(phoneNumber, buildChargeRestoredMessage(info)));
+                isNotified = false;
+            }
+        });
+    }
+
+    private void errorWrapper(Runnable r) {
+        try {
+            r.run();
+        } catch (Exception ex) {
+            log.warning("Scheduler error: " + ex.getMessage());
         }
     }
 
@@ -60,7 +70,7 @@ public class ChargeLevelScheduler {
         return new String(sb);
     }
 
-    private int parsePercent(String percent) {
+    private int parsePercentChargeBattery(String percent) {
         try {
             return Integer.parseInt(percent);
         } catch (NumberFormatException e) {

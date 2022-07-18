@@ -3,6 +3,7 @@ package com.malexj.services.base;
 import com.malexj.models.requests.MessageRequest;
 import com.malexj.services.ParseService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 import static org.springframework.http.HttpHeaders.*;
 
+@Log
 @RequiredArgsConstructor
 public abstract class AbstractRestService {
 
@@ -68,11 +70,17 @@ public abstract class AbstractRestService {
         return restTemplate.exchange(fullUri.toUriString(), HttpMethod.GET, httpEntity, String.class);
     }
 
-    protected String getHeadersCookies(ResponseEntity<String> responseEntity) {
-        return Optional.ofNullable(responseEntity) //
+    /**
+     * Extract headers cookies from Http login response
+     */
+    protected String extractCookies(ResponseEntity<String> responseEntity) {
+        HttpHeaders httpHeaders = Optional.ofNullable(responseEntity) //
                 .map(HttpEntity::getHeaders) //
+                .orElseThrow(() -> new IllegalArgumentException("Headers not found in login response"));
+        log.info("login headers: " + httpHeaders);
+        return Optional.ofNullable(httpHeaders) //
                 .map(header -> header.getFirst(HttpHeaders.SET_COOKIE)) //
-                .orElseThrow(() -> new IllegalArgumentException("Cookies not found in Login response"));
+                .orElseThrow(() -> new IllegalArgumentException("Cookies not found in login response"));
     }
 
     protected <T> T parseResponseEntity(String body, Class<T> valueType) {

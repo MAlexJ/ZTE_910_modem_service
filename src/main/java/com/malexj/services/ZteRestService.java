@@ -5,6 +5,7 @@ import com.malexj.models.responses.BatteryResponse;
 import com.malexj.models.responses.LoginResponse;
 import com.malexj.models.responses.MessageResponse;
 import com.malexj.services.base.AbstractRestService;
+import lombok.extern.java.Log;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 
+@Log
 @Service
 public class ZteRestService extends AbstractRestService {
 
@@ -26,10 +28,13 @@ public class ZteRestService extends AbstractRestService {
      */
     public LoginResponse login() {
         String rawData = buildRawData(buildLoginUriComponents());
+        log.info("login URL - " + rawData);
         HttpHeaders httpHeaders = buildHttpHeaders();
         HttpEntity<String> httpEntity = buildRequestHttpEntity(rawData, httpHeaders);
         ResponseEntity<String> response = httpPost(httpEntity);
-        return new LoginResponse(response.getBody(), getHeadersCookies(response));
+        log.info("login response: " + response.getBody());
+        String cookies = extractCookies(response);
+        return new LoginResponse(response.getBody(), cookies);
     }
 
 

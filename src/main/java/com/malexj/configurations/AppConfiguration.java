@@ -17,6 +17,8 @@ public class AppConfiguration {
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
+        var customizer = new RestTemplateStandardCookieCustomizer();
+        return builder.additionalCustomizers(customizer) //
+                .build();
     }
 }

@@ -28,7 +28,7 @@ public class ZteRestService extends AbstractRestService {
      */
     public LoginResponse login() {
         String rawData = buildRawData(buildLoginUriComponents());
-        log.info("login URL - " + rawData);
+        log.info("build login URL - " + rawData);
         HttpHeaders httpHeaders = buildHttpHeaders();
         HttpEntity<String> httpEntity = buildRequestHttpEntity(rawData, httpHeaders);
         ResponseEntity<String> response = httpPost(httpEntity);

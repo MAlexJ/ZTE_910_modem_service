@@ -7,9 +7,11 @@ import com.malexj.models.responses.LoginResponse;
 import com.malexj.models.responses.MessageResponse;
 import com.malexj.services.ZteRestService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Log
 @RestController
 @RequestMapping("/rest/v1")
 @RequiredArgsConstructor
@@ -20,18 +22,24 @@ public class ZteRestController extends AbstractController {
 
     @GetMapping("/login")
     public ResponseEntity<LoginResponse> login() {
-        return ResponseEntity.ok(service.login());
+        LoginResponse response = service.login();
+        log.info("GET:'/login', response - " + response);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/send")
     public ResponseEntity<MessageResponse> sendMessage(@RequestBody MessageRequest request) {
-        validateMessageRequest(request);
-        return ResponseEntity.ok(service.sendMessage(request));
+        log.info("POST:'/send', request - " + request);
+        var response = service.sendMessage(validateMessageRequest(request));
+        log.info("POST:'/send', response - " + response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/battery")
     public ResponseEntity<BatteryResponse> batteryChargingStatus() {
-        return ResponseEntity.ok(service.getInfo(BATTERY_CHARGING_REQUEST));
+        var response = service.getInfo(BATTERY_CHARGING_REQUEST);
+        log.info("GET:'/battery', response - " + response);
+        return ResponseEntity.ok(response);
     }
 
 }

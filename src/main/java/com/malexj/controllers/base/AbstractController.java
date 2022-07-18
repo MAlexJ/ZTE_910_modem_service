@@ -7,10 +7,11 @@ import java.util.Objects;
 
 public abstract class AbstractController {
 
-    protected void validateMessageRequest(MessageRequest request) {
+    protected MessageRequest validateMessageRequest(MessageRequest request) {
         if (isNotNumeric(request.phoneNumber())) {
             throw new ValidationException("phone number must contain only numbers");
         }
+        return request;
     }
 
     public boolean isNotNumeric(String value) {

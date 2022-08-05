@@ -136,7 +136,10 @@ public abstract class AbstractRestService {
                 .build();
     }
 
-    protected String buildRawData(UriComponents uriComponents) {
+    /**
+     * Build URL from constituent components (url, path parameters)
+     */
+    protected String buildUriComponents(UriComponents uriComponents) {
         return uriComponents//
                 .toString() //
                 .substring(1);

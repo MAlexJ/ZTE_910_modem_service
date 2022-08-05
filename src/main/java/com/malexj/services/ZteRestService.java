@@ -27,10 +27,10 @@ public class ZteRestService extends AbstractRestService {
      * @return response with cookies
      */
     public LoginResponse login() {
-        String rawData = buildRawData(buildLoginUriComponents());
-        log.info("build login URL - " + rawData);
+        String uriComponents = buildUriComponents(buildLoginUriComponents());
+        log.info("build login URL - " + uriComponents);
         HttpHeaders httpHeaders = buildHttpHeaders();
-        HttpEntity<String> httpEntity = buildRequestHttpEntity(rawData, httpHeaders);
+        HttpEntity<String> httpEntity = buildRequestHttpEntity(uriComponents, httpHeaders);
         ResponseEntity<String> response = httpPost(httpEntity);
         log.info("login response: " + response.getBody());
         String cookies = extractCookies(response);
@@ -70,9 +70,9 @@ public class ZteRestService extends AbstractRestService {
 
     private ResponseEntity<String> sendMessage(MessageRequest request, String cookies) {
         UriComponents messageUriComponents = buildMessageUriComponents(request);
-        String rawData = buildRawData(messageUriComponents);
+        String fullUriComponents = buildUriComponents(messageUriComponents);
         HttpHeaders httpHeaders = buildHttpHeaders(cookies);
-        HttpEntity<String> httpEntity = buildRequestHttpEntity(rawData, httpHeaders);
+        HttpEntity<String> httpEntity = buildRequestHttpEntity(fullUriComponents, httpHeaders);
         return httpPost(httpEntity);
     }
 }

@@ -25,6 +25,44 @@ Java Web service that uses ZTE 910 modem as service for sending SMS messages
 8. HEADER_ORIGIN
 9. HEADER_REFERER
 
+### How to manually test ZTE 910 modem:
+
+##### LOGIN
+
+```
+curl "http://192.168.32.1/goform/goform_set_cmd_process"
+-H "Connection: keep-alive"
+-H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8"
+-H "Origin: http://192.168.32.1"
+-H "Referer: http://192.168.32.1/index.html"
+--data-raw "isTest=false&goformId=LOGIN&password=YWRtaW4%3D"
+--insecure
+-c cookie.txt
+-o file.txt
+```
+
+##### SEND SMS
+
+```
+curl "http://192.168.32.1/goform/goform_set_cmd_process"
+-H "Accept: application/json, text/javascript, */*; q=0.01"
+-H "Accept-Language: en-US,en;q=0.9,ru;q=0.8"
+-H "Connection: keep-alive"
+-H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8"
+-H "Cookie: stok=078DBC4F4A38DD7F3BB43BC2"
+-H "Origin: http://192.168.32.1"
+-H "Referer: http://192.168.32.1/index.html"
+-H "X-Requested-With: XMLHttpRequest"
+--data-raw "isTest=false&goformId=SEND_SMS&notCallback=true&Number=80672687484&MessageBody=00680065006C006C006F0021&ID=-1&encode_type=GSM7_default"
+--insecure
+```
+
+#### CHECK BATTERY
+
+```
+curl "http://192.168.32.1/goform/goform_get_cmd_process?multi_data=1&isTest=false&cmd=battery_charging,battery_vol_percent,battery_pers" -H "Referer: http://192.168.32.1/index.html"
+```
+
 ### Postman
 
 * postman collection for test API: /info/GSM APi.postman_collection.json

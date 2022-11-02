@@ -17,6 +17,7 @@ spring:
     name: modem-service
   zipkin:
     baseUrl: ${ZIPKIN_PORT:http://127.0.0.1:9411}
+    enabled: ${ZIPKIN_ENABLED:false}
 
 scheduled:
   task:

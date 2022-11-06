@@ -54,7 +54,7 @@ public abstract class AbstractRestService {
     @Value("${gsm.url.referer}")
     private String refererUrl;
 
-    @Value("${gsm.pwd}")
+    @Value("${gsm.admin_pwd}")
     private String gsmPassword;
 
     private final RestTemplate restTemplate;

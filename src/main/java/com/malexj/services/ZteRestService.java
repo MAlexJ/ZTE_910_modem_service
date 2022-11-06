@@ -43,8 +43,8 @@ public class ZteRestService extends AbstractRestService {
      *
      * @return cookies
      */
-    public String getCookies() {
-        return login().cookies();
+    public String getCookies(LoginResponse response) {
+        return response.cookies();
     }
 
     /**
@@ -54,7 +54,12 @@ public class ZteRestService extends AbstractRestService {
      * @return result success or fault
      */
     public MessageResponse sendMessage(MessageRequest messageRequest) {
-        ResponseEntity<String> messageResponse = sendMessage(messageRequest, getCookies());
+        // 1. login
+        LoginResponse response = login();
+        // 2. get cookies
+        String cookies = getCookies(response);
+        // 3. set cookies to send SMS request
+        ResponseEntity<String> messageResponse = sendMessage(messageRequest, cookies);
         return new MessageResponse(messageResponse.getBody());
     }
 

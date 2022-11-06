@@ -20,11 +20,11 @@ Java Web service that uses ZTE 910 modem as service for sending SMS messages
 
 ### ZTE 910 modem Variables
 
-5. PWD
-6. URL_GET
-7. URL_POST
-8. HEADER_ORIGIN
-9. HEADER_REFERER
+6. ADMIN_PWD - admin password (default for ZTE 910)
+7. URL_GET - base get URL for API
+8. URL_POST - base POST url
+9. HEADER_ORIGIN - HTTP header
+10. HEADER_REFERER - HTTP header
 
 ### How to manually test ZTE 910 modem:
 

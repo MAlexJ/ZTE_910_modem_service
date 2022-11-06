@@ -1,5 +1,5 @@
 gsm:
-  pwd: ${PWD:YWRtaW4%3D}
+  pwd: ${ADMIN_PWD:YWRtaW4%3D}
   url:
     get: ${URL_GET:http://192.168.32.1/goform/goform_get_cmd_process}
     post: ${URL_POST:http://192.168.32.1/goform/goform_set_cmd_process}
